@@ -27,3 +27,7 @@ def entry_not_found(request, entry_title):
     return render(request, "encyclopedia/entry_not_found.html", {
         "title": entry_title
     })
+
+
+def search(request, q):
+    entry(request, q)

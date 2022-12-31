@@ -1,4 +1,5 @@
 from markdown2 import markdown
+from random import choice
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -40,3 +41,7 @@ def search(request):
                 "entries": found,
             })
     return HttpResponseRedirect(reverse('entry', args=[request.GET['q']]))
+
+
+def random_entry(request):
+    return HttpResponseRedirect(reverse('entry', args=[choice(util.list_entries())]))

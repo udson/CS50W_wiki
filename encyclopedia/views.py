@@ -1,6 +1,8 @@
 from markdown2 import markdown
 
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse
 
 from . import util
 
@@ -29,5 +31,12 @@ def entry_not_found(request, entry_title):
     })
 
 
-def search(request, q):
-    entry(request, q)
+def search(request):
+    found = [item for item in util.list_entries() if request.GET['q'] in item]
+    if len(found):
+        if request.GET['q'] not in found:
+            return render(request, "encyclopedia/search_results.html", {
+                "q": request.GET['q'],
+                "entries": found,
+            })
+    return HttpResponseRedirect(reverse('entry', args=[request.GET['q']]))

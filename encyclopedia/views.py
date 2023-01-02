@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from . import util
+from .forms import EntryForm
 
 
 def index(request):
@@ -45,3 +46,23 @@ def search(request):
 
 def random_entry(request):
     return HttpResponseRedirect(reverse('entry', args=[choice(util.list_entries())]))
+
+
+def new_entry(request):
+    if request.method == "POST":
+        form = EntryForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data['title']
+            content = form.cleaned_data['content']
+            if util.get_entry(title) is None:
+                util.save_entry(title, content)
+                return HttpResponseRedirect(reverse(
+                    'entry', args=[request.POST['title']]
+                ))
+            form.add_error(field=None, error=f'Error! The entry "{title}" already exists.')
+    else:
+        form = EntryForm()
+
+    return render(request, "encyclopedia/new_entry.html", {
+        "form": form,
+    })

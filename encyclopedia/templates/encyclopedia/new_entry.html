@@ -1,13 +1,13 @@
 {% extends 'encyclopedia/layout.html' %}
 
 {% block title %}
-    New entry
+    New Page
 {% endblock title %}
 
 {% block body %}
-    <h1>New entry</h1>
+    <h1>New Page</h1>
     <div class="container px-5 my-5">
-        <form action="{% url 'new_entry' %}" method="post">
+        <form action="{% url 'new' %}" method="post">
             {% csrf_token %}
             
             {% if form.non_field_errors %}

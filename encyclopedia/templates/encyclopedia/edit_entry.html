@@ -1,13 +1,13 @@
 {% extends 'encyclopedia/layout.html' %}
 
 {% block title %}
-    Edit entry | {{ form.title }}
+    Edit entry | {{ title }}
 {% endblock title %}
 
 {% block body %}
-    <h1>Edit entry | {{ form.title }}</h1>
+    <h1>Edit entry | {{ title }}</h1>
     <div class="container px-5 my-5">
-        <form action="{% url 'new_entry' %}" method="post">
+        <form action="{% url 'edit_entry' title %}" method="post">
             {% csrf_token %}
             
             {% if form.non_field_errors %}
@@ -18,7 +18,7 @@
             </div>
             {% endif %}
             <div class="form-floating mb-3">
-                <textarea class="form-control{% if form.content.errors %} is-invalid{% endif %}" id="id_content" name="content" type="text" placeholder="Content" style="height: 10rem;">{{ form.content.value | default:'' }}</textarea>
+                <textarea class="form-control{% if form.content.errors %} is-invalid{% endif %}" id="id_content" name="content" placeholder="Content" style="height: 10rem;">{{form.content.value}}</textarea>
                 <div class="invalid-feedback">{{ form.content.errors }}</div>
             </div>
             <div class="d-grid">

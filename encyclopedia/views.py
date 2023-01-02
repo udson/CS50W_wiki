@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from . import util
-from .forms import EntryForm
+from .forms import *
 
 
 def index(request):
@@ -17,7 +17,7 @@ def index(request):
 
 def entry(request, entry_title):
     content = util.get_entry(entry_title)
-
+    
     if content is None:
         return entry_not_found(request, entry_title)
     
@@ -50,7 +50,7 @@ def random_entry(request):
 
 def new_entry(request):
     if request.method == "POST":
-        form = EntryForm(request.POST)
+        form = NewEntryForm(request.POST)
         if form.is_valid():
             title = form.cleaned_data['title']
             content = form.cleaned_data['content']
@@ -61,7 +61,7 @@ def new_entry(request):
                 ))
             form.add_error(field=None, error=f'Error! The entry "{title}" already exists.')
     else:
-        form = EntryForm()
+        form = NewEntryForm()
 
     return render(request, "encyclopedia/new_entry.html", {
         "form": form,
@@ -70,19 +70,19 @@ def new_entry(request):
 
 def edit_entry(request, entry_title):
     if request.method == "POST":
-        form = EntryForm({
-            "title": entry_title,
-            "content": request.POST['content']
-        })
+        form = EditEntryForm(request.POST)
         if form.is_valid():
-            content = form.cleaned_data['content']
+            content = f"{form.cleaned_data['content']}\n"
             util.save_entry(entry_title, content)
             return HttpResponseRedirect(reverse(
-                'entry', args=[request.POST['title']]
+                'entry', args=[entry_title]
             ))
     else:
-        form = EntryForm()
+        form = EditEntryForm({
+            "content": util.get_entry(entry_title),
+        })
 
-    return render(request, "encyclopedia/new_entry.html", {
+    return render(request, "encyclopedia/edit_entry.html", {
+        "title": entry_title,
         "form": form,
     }) 

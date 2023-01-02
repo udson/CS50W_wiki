@@ -66,3 +66,23 @@ def new_entry(request):
     return render(request, "encyclopedia/new_entry.html", {
         "form": form,
     })
+
+
+def edit_entry(request, entry_title):
+    if request.method == "POST":
+        form = EntryForm({
+            "title": entry_title,
+            "content": request.POST['content']
+        })
+        if form.is_valid():
+            content = form.cleaned_data['content']
+            util.save_entry(entry_title, content)
+            return HttpResponseRedirect(reverse(
+                'entry', args=[request.POST['title']]
+            ))
+    else:
+        form = EntryForm()
+
+    return render(request, "encyclopedia/new_entry.html", {
+        "form": form,
+    }) 
